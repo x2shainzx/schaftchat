@@ -1,0 +1,119 @@
+/*This is the style sheet for the main page*/
+html{
+	margin: 0;
+	padding: 0;
+	max-height: 100%;
+	
+}
+
+body{
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+.container{
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	overflow: auto;
+}
+
+canvas{
+	position: absolute;
+    left: 0px; 
+    top: 0px;
+	margin: 0;
+	padding: 0;
+	min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+	z-index: 2;
+}
+video {
+    position: absolute; 
+    left: 0; 
+    top: 0;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+	z-index: 1;
+}
+
+#buttonBack {
+	position: absolute;
+	left: 7%;
+	font-size: 60px;
+	color: white;
+    background-color:rgba(0,0,0,0.0);
+	height: 100px;
+	width: 100px;
+	border-radius: 100%;
+	border-radius: 50%;
+	border: 3px;
+	z-index: 3;
+}
+
+#buttonBack:hover {
+    background-color:rgba(255,0,0,0.7);
+	z-index: 3;
+}
+
+#buttonSnap {
+	position: relative;
+	left: 45%;
+    background-color:rgba(0,0,0,0.3);
+	height: 100px;
+	width: 100px;
+	border-radius: 100%;
+	border-radius: 50%;
+	border: 3px solid white;
+	z-index: 3;
+}
+
+#buttonSnap:hover {
+    background-color:rgba(255,255,255,0.4);
+	z-index: 3;
+}
+
+#buttonSend {
+	position: absolute;
+	right: 7%;
+	font-size: 80px;
+	color: white;
+    background-color:rgba(0,0,0,0);
+	height: 100px;
+	width: 100px;
+	border-radius: 100%;
+	border-radius: 50%;
+	border: 3px;
+	z-index: 3;
+}
+
+#buttonSend:hover {
+    background-color:rgba(0,255,0,0.7);
+	z-index: 3;
+}
+
+#footer {
+	position: absolute;
+	right: 0;
+	bottom: 15%;
+	left: 0;
+
+}
+
+#footerr {
+	position: absolute;
+	right: 0;
+	bottom: 2%;
+	left: 0;
+
+}
+
+.text {
+	z-index: 2;
+	position: relative;
+}
