@@ -1,0 +1,219 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8" />
+<title>Schaftchat</title>
+<meta name="description" content="Schaftchat" />
+<link rel="shortcut icon" type="image/x-icon" href="../../images/favicon.ico" />
+<link rel="stylesheet" type="text/css" href="../../styles/style.css" title="Normal" />
+<style type="text/css">
+</style>
+</head>
+
+<body>
+<div id="schaft"><!--Main div for full application-->
+	<pre id="preLog">Loading…</pre><!--Data print out for testing usage, will remove-->
+	<div class="container"><!--Div for webcam stream and buttons-->
+		<video id="video" autoplay="autoplay" muted="muted" ></video><!--Fetches webcam stream-->
+		<div id="footer"><!--Div for the back and send buttons-->
+			<div id="myBUTTONS" style="display:none;"><!--Div to id both the back and send buttons for hidding-->
+				<input type="button" id="buttonBack" value="X" disabled="disabled" onclick="removesnap()" /><!--Back button to close overlay picture and returns to last screen-->
+				<input type="button" id="buttonSend" value=">" disabled="disabled" onclick="sent()" /><!--Send button to go to send menu-->
+			</div>
+		</div>
+		<div id="footerr"><!--Div for snap button button-->
+			<div id="mySHOT" style="display:block;"><!--Div to identify the snap button to hide-->
+				<input type="button" id="buttonSnap" value=" " accesskey="" disabled="disabled" onclick="snapshot()" /><!--Snap button that takes the webcam image and freezes it-->
+			</div>
+		</div>
+		<div class="canvasclass" id="myCANVAS" style="display:none;"><!--Div for the captured image-->
+			<canvas id="canvas"></canvas><!--the captured image-->
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+"use strict";
+var video = document.getElementById('video');
+var canvas = document.getElementById('canvas');
+var videoStream = null;
+var preLog = document.getElementById('preLog');
+
+/**
+ * Adds information to the log.
+ * @param (text) Text to be added to log.
+ * @return Text log.
+ */
+function log(text)
+{
+	if (preLog) preLog.textContent += ('\n' + text);
+	else alert(text);
+}
+
+/**
+ * Displays "Snap Sent" warning.
+ * @param N/A.
+ * @return Warning.
+ */
+function sent(){
+        alert("Snap Sent");
+}
+
+/**
+ * Adds Displays or hides divs.
+ * @param (id) ID of div to hide.
+ * @return ID is made hidden or displayed depending on its last state.
+ */
+function showhide(id)
+{
+    var e = document.getElementById(id);
+    e.style.display = (e.style.display == 'block') ? 'none' : 'block';//Checks state if ID and negates the display
+}
+
+/**
+ * Hides myShot button.
+ * Displays myCANVAS and myBUTTONS.
+ * @param N/A.
+ * @return Hidden and Displayed items.
+ */
+function snaptaken()
+{
+	showhide('mySHOT');
+	showhide('myCANVAS');
+	showhide('myBUTTONS');
+}
+
+/**
+ * Displays myShot button.
+ * Hides myCANVAS and myBUTTONS.
+ * @param N/A.
+ * @return Hidden and Displayed items.
+ */
+function removesnap()
+{
+	showhide('mySHOT');
+	showhide('myCANVAS');
+	showhide('myBUTTONS');
+}
+
+/**
+ * Grabs screenshot from video.
+ * @param N/A.
+ * @return Current screenshot from video.
+ */
+function snapshot()
+{
+	//canvas.width = window.innerWidth;
+	//canvas.height = window.innerHeight;
+	canvas.width = video.videoWidth;//Sets screenshot width to video width
+	canvas.height = video.videoHeight;//Sets screenshot height to video height
+	canvas.getContext('2d').drawImage(video, 0, 0);
+	snaptaken()//Calls methoed to display/hide buttons
+}
+
+/**
+ * Adds 'Access to camera was denied!' to log if aplicable
+ * @param N/A.
+ * @return Hidden and Displayed items.
+ */
+function noStream()
+{
+	log('Access to camera was denied!');
+}
+
+/**
+ * Fetches stream from webcam and activates buttons if stream is found.
+ * @param (stream) A boolien on if stream is active.
+ * @return Stream and activated buttons.
+ */
+function gotStream(stream)
+{
+	var myButton = document.getElementById('buttonStart');//start methoed called on successful page load
+	if (myButton) myButton.disabled = true;
+	videoStream = stream;
+	log('Got stream.');
+	video.onerror = function ()
+	{
+		log('video.onerror');
+		if (video) stop();
+	};
+	stream.onended = noStream;
+	if (window.webkitURL) video.src = window.webkitURL.createObjectURL(stream);
+	else if (video.mozSrcObject !== undefined)
+	{
+		video.mozSrcObject = stream;
+		video.play();
+	}
+	else if (navigator.mozGetUserMedia)
+	{
+		video.src = stream;
+		video.play();
+	}
+	else if (window.URL) video.src = window.URL.createObjectURL(stream);
+	else video.src = stream;
+	myButton = document.getElementById('buttonBack');
+	if (myButton) myButton.disabled = false;//Enables Back Button
+	myButton = document.getElementById('buttonSnap');
+	if (myButton) myButton.disabled = false;//Enables Snap Button
+	myButton = document.getElementById('buttonSend');
+	if (myButton) myButton.disabled = false;//Enables Send Button
+}
+
+/**
+ * Starts the webcam stream.
+ * @param N/A.
+ * @return Webcam stream activated.
+ */
+function start()
+{
+	if ((typeof window === 'undefined') || (typeof navigator === 'undefined')) log('This Web browser does not support objects window needed');//checks for errors and adds things to log
+	else if (!(video && canvas)) log('HTML context error!');
+	else
+	{
+		log('Get user media…');//condition statments for starting stream ->
+		if (navigator.getUserMedia) navigator.getUserMedia({video:true}, gotStream, noStream);
+		else if (navigator.oGetUserMedia) navigator.oGetUserMedia({video:true}, gotStream, noStream);
+		else if (navigator.mozGetUserMedia) navigator.mozGetUserMedia({video:true}, gotStream, noStream);
+		else if (navigator.webkitGetUserMedia) navigator.webkitGetUserMedia({video:true}, gotStream, noStream);
+		else if (navigator.msGetUserMedia) navigator.msGetUserMedia({video:true, audio:false}, gotStream, noStream);
+		else log('getUserMedia() not available from your Web browser!');// <- End of conditions
+	}
+}
+
+/**
+ * Stops the webcam stream.
+ * @param N/A.
+ * @return Webcam stream diactivated.
+ */
+function stop()//This methoed isn't used except if the video stream fails
+{
+	var myButton = document.getElementById('buttonStop');//Button snap not used yet
+	if (myButton) myButton.disabled = true;
+	myButton = document.getElementById('buttonSnap');
+	if (myButton) myButton.disabled = true;
+	if (videoStream)
+	{
+		if (videoStream.stop) videoStream.stop();
+		else if (videoStream.msStop) videoStream.msStop();
+		videoStream.onended = null;
+		videoStream = null;
+	}
+	if (video)
+	{
+		video.onerror = null;
+		video.pause();
+		if (video.mozSrcObject)
+			video.mozSrcObject = null;
+		video.src = "";
+	}
+	myButton = document.getElementById('buttonStart');//Restarts stream if stopped
+	if (myButton) myButton.disabled = false;//Only works if button is enabled
+}
+
+start();//starts start methoed
+
+</script>
+</body>
+</html>
